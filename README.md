@@ -1,7 +1,11 @@
 # mod3_project
 
-This repo contains:
-* Description of the project in a PDF
-* Three python starter files
-* Three test files
-* A starter jupyter notebook
+
+
+a. Listing project members
+Tina Liu, Zaria Rankine
+
+
+b. Goals
+c. Responsibilities
+d. Summary of the files in the repository
