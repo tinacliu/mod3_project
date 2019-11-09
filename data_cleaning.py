@@ -11,14 +11,57 @@ Each support function should have an informative name and return the partially c
 """
 import pandas as pd
 
-def support_function_one(example):
-    pass
+import requests
+from dotenv import load_dotenv
+import os
 
-def support_function_two(example):
-    pass
+load_dotenv()
 
-def support_function_three(example):
-    pass
+def borough_auto_rename(dataset):
+  ORIGINAL_COLS = dataset.columns
+
+  # rename the columns, and rearrange so similar data is together
+  dataset.rename(columns=lambda x:x.split()[0].lower()
+                  if x.split()[0] not in ['Number','Average']
+                  else x.split()[2].lower(),
+                inplace=True)
+  return dataset
+
+def borough_rename(dataset):
+  dataset.rename(columns={
+                'new':'code',
+                'inner/':'inner_outer',
+                'active':'active_business',
+                'median':'house_price',
+                'd':'council_tax',
+                'rented':'council_rental',
+                '%':'greenspace',
+                'total':'carbon_emmision',
+                'cars,':'cars',
+                'transport':'pub_transport'
+                }, inplace=True)
+
+  return dataset
+
+# def support_function_three(example):
+#     pass
+
+def get_coordi(borough):
+  MAPBOX_BASE_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
+  MAPBOX_KEY = os.getenv("MAPBOX_KEY")
+  options = '&autocomplete=true&country=gb'
+  url = MAPBOX_BASE_URL+borough+'.json?access_token='+MAPBOX_KEY + options
+
+  response = requests.get(url)
+  if response.status_code == 200:
+    resp = response.json()
+
+  longitude = resp['features'][0]['center'][0]
+  latitude = resp['features'][0]['center'][1]
+
+  return latitude, longitude
+
+
 
 def full_clean():
     """
@@ -27,11 +70,17 @@ def full_clean():
 
     :return: cleaned dataset to be passed to hypothesis testing and visualization modules.
     """
-    dirty_data = pd.read_csv("./data/dirty_data.csv")
 
-    cleaning_data1 = support_function_one(dirty_data)
-    cleaning_data2 = support_function_two(cleaning_data1)
-    cleaned_data= support_function_three(cleaning_data2)
-    cleaned_data.to_csv('./data/cleaned_for_testing.csv')
-    
-    return cleaned_data
+    # we only need 19 columns, skip an empty row & inner london as it has lots of missing value
+    # also skip the summary rows at the end
+    cols_to_use = [1,2,3,7,32,47,49,52,53,57,59,60,62,65,66,73,75,76,80]
+    dirty_borough_data = pd.read_csv('./data/london-borough-profiles-2016.csv',
+                              usecols = cols_to_use,
+                              skiprows = [1,2],
+                              nrows=32)
+
+    borough_renamed1 = borough_auto_rename(dirty_borough_data)
+    borough_data = borough_rename(borough_renamed1)
+    borough_data.to_csv('./data/borough_data_cleaned.csv')
+
+    return borough_data
