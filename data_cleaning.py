@@ -3,11 +3,13 @@ This module is for your data cleaning.
 It should be repeatable.
 
 ## PRECLEANING
-There should be a separate script recording how you transformed the json api calls into a dataframe and csv.
+There should be a separate script recording how you transformed
+the json api calls into a dataframe and csv.
 
 ## SUPPORT FUNCTIONS
 There can be an unlimited amount of support functions.
-Each support function should have an informative name and return the partially cleaned bit of the dataset.
+Each support function should have an informative name and return the
+partially cleaned bit of the dataset.
 """
 import pandas as pd
 
@@ -69,10 +71,11 @@ def full_clean():
     Assumption: Your data will be saved in a data folder and named "dirty_data.csv"
 
     :return: cleaned dataset to be passed to hypothesis testing and visualization modules.
-    """
 
-    # we only need 19 columns, skip an empty row & inner london as it has lots of missing value
-    # also skip the summary rows at the end
+
+    # we only need 19 columns, skip an empty row & inner london as it has
+    lots of missing value, also skip the summary rows at the end
+    """
     cols_to_use = [1,2,3,7,32,47,49,52,53,57,59,60,62,65,66,73,75,76,80]
     dirty_borough_data = pd.read_csv('./data/london-borough-profiles-2016.csv',
                               usecols = cols_to_use,
