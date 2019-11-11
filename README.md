@@ -22,6 +22,8 @@ Hypothesis 1:
 - H0: Air quality of boroughs in Inner London = Air quality of boroughs in Outer London
 - H1: Air quality of boroughs in Inner London != Air quality of boroughs in Outer London
 
+Inner London and Outer London is as defined by the borough dataset.
+
 Hypothesis 2:
 - H0: Air quality of borough of interest 1 = Air quality of borough of interest 2
 - H1: Air quality of borough of interest 1 > Air quality of borough of interest 2
