@@ -67,20 +67,23 @@ def full_clean():
     """
     This is the one function called that will run all the support functions.
     Assumption: Your data will be saved in a data folder and named "dirty_data.csv"
-
     :return: cleaned dataset to be passed to hypothesis testing and visualization modules.
+    # we only need 19 columns, skip an empty row & inner london as it has
+    lots of missing value, also skip the summary rows at the end
     """
-
-    # we only need 19 columns, skip an empty row & inner london as it has lots of missing value
-    # also skip the summary rows at the end
     cols_to_use = [1,2,3,7,32,47,49,52,53,57,59,60,62,65,66,73,75,76,80]
     dirty_borough_data = pd.read_csv('./data/london-borough-profiles-2016.csv',
                               usecols = cols_to_use,
                               skiprows = [1],
+                              # skiprows = [1,2],
                               nrows=33)
-
     borough_renamed1 = borough_auto_rename(dirty_borough_data)
     borough_data = borough_rename(borough_renamed1)
     borough_data.to_csv('./data/borough_data_cleaned.csv')
-
+    borough_data['coordi'] = borough_data.area.map(lambda x: api.get_multi_coordi(x))
+    # manually found out the coordinates of sutton, input it in
+    # sutton = [[51.366136, -0.176360]]
+    borough_data.at[28,'coordi'] = [[51.366136, -0.176360]]
+    borough_data.to_csv('./data/borough_data_cleaned_coordi.csv')
     return borough_data
+
