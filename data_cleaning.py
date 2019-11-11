@@ -76,8 +76,8 @@ def full_clean():
     cols_to_use = [1,2,3,7,32,47,49,52,53,57,59,60,62,65,66,73,75,76,80]
     dirty_borough_data = pd.read_csv('./data/london-borough-profiles-2016.csv',
                               usecols = cols_to_use,
-                              skiprows = [1,2],
-                              nrows=32)
+                              skiprows = [1],
+                              nrows=33)
 
     borough_renamed1 = borough_auto_rename(dirty_borough_data)
     borough_data = borough_rename(borough_renamed1)
