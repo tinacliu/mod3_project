@@ -13,11 +13,6 @@ partially cleaned bit of the dataset.
 """
 import pandas as pd
 
-import requests
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 def borough_auto_rename(dataset):
   ORIGINAL_COLS = dataset.columns
@@ -48,21 +43,6 @@ def borough_rename(dataset):
 # def support_function_three(example):
 #     pass
 
-def get_coordi(borough):
-  MAPBOX_BASE_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
-  MAPBOX_KEY = os.getenv("MAPBOX_KEY")
-  options = '&autocomplete=true&country=gb'
-  url = MAPBOX_BASE_URL+borough+'.json?access_token='+MAPBOX_KEY + options
-
-  response = requests.get(url)
-  if response.status_code == 200:
-    resp = response.json()
-
-  longitude = resp['features'][0]['center'][0]
-  latitude = resp['features'][0]['center'][1]
-
-  return latitude, longitude
-
 
 
 def full_clean():
@@ -79,11 +59,12 @@ def full_clean():
     cols_to_use = [1,2,3,7,32,47,49,52,53,57,59,60,62,65,66,73,75,76,80]
     dirty_borough_data = pd.read_csv('./data/london-borough-profiles-2016.csv',
                               usecols = cols_to_use,
-                              skiprows = [1,2],
-                              nrows=32)
+                              skiprows = [1],
+                              # skiprows = [1,2],
+                              nrows=33)
 
     borough_renamed1 = borough_auto_rename(dirty_borough_data)
     borough_data = borough_rename(borough_renamed1)
-    borough_data.to_csv('./data/borough_data_cleaned.csv')
+    borough_data.to_csv('./data/borough_data_cleaned .csv')
 
     return borough_data
