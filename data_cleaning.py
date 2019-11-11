@@ -12,6 +12,7 @@ Each support function should have an informative name and return the
 partially cleaned bit of the dataset.
 """
 import pandas as pd
+import api
 
 
 def borough_auto_rename(dataset):
@@ -65,6 +66,23 @@ def full_clean():
 
     borough_renamed1 = borough_auto_rename(dirty_borough_data)
     borough_data = borough_rename(borough_renamed1)
-    borough_data.to_csv('./data/borough_data_cleaned .csv')
+    borough_data.to_csv('./data/borough_data_cleaned.csv')
+
+    borough_data['coordi'] = borough_data.area.map(lambda x: api.get_multi_coordi(x))
+    # manually found out the coordinates of sutton, input it in
+    # sutton = [[51.366136, -0.176360]]
+    borough_data.at[28,'coordi'] = [[51.366136, -0.176360]]
+    borough_data.to_csv('./data/borough_data_cleaned_coordi.csv')
 
     return borough_data
+
+
+
+
+
+
+
+
+
+
+
