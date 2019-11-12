@@ -28,6 +28,16 @@ Hypothesis 2:
 - H0: Air quality of borough of interest 1 = Air quality of borough of interest 2
 - H1: Air quality of borough of interest 1 > Air quality of borough of interest 2
 
+Areas of interest are defined as:
+Boroughs with highest and lowest Greenspace - Havering and City of London
+
+Hypothesis 3:
+
+H0: Air quality of borough of interest 1 = Air quality of borough of interest 2
+H1: Air quality of borough of interest 1 > Air quality of borough of interest 2
+Areas of interest are defined as: Boroughs with highest and lowest House Prices - 'Kensington and Chelsea' and 'Barking and Dagenham'
+
+
 Note: the borough of interest will depend on the explotory data analysis results from looking at the stats info we have on the boroughs. I.e. the most expensive borough by median house price versus the most affordable borough.
 
 * d. Responsibilities
