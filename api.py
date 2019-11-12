@@ -62,6 +62,8 @@ def get_place_aqi(df, area, hours=6):
   # print(coordi_list)
 
   aqi_list = []
+
+
   for coordi in coordi_list:
     aqi_list.append(get_air_quality(coordi[0],coordi[1],hours))
 
