@@ -56,6 +56,12 @@ def get_air_quality(lat, long, hours=6):
   return aqi_list
 
 
+# helper function to flatter list in a list
+def flatten_list(l):
+  flat_list = [item for sublist in l for item in sublist]
+  return flat_list
+
+
 # get the air quality data of a place, returns a list
 def get_place_aqi(df, area, hours=6):
   coordi_list = df[df['area']==area].coordi.values[0]
@@ -63,13 +69,12 @@ def get_place_aqi(df, area, hours=6):
 
   aqi_list = []
 
-
   for coordi in coordi_list:
     aqi_list.append(get_air_quality(coordi[0],coordi[1],hours))
 
-  flat_list = [item for sublist in aqi_list for item in sublist]
+  final_list = flatten_list(aqi_list)
 
-  return flat_list
+  return final_list
 
 
 
