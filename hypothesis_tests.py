@@ -42,6 +42,9 @@ def Cohen_d(sample1, sample2):
 
 def twosample_tstatistic(sample1, sample2):
     stat = stats.ttest_ind(sample1, sample2, equal_var = False)
+    return stat
+
+def print_stats(stat):
     t_stat = stat.statistic
     p_val = stat.pvalue
     print('T-Stat: ',t_stat, ' P-Val: ',p_val)
@@ -60,10 +63,18 @@ def evaluate_PDF(rv, x=4):
     ys = rv.pdf(xs)
     return xs, ys
 
+def compare_pval_alpha(p_val, alpha):
+    status = ''
+    if p_val > alpha:
+        status = "Fail to reject"
+    else:
+        status = 'Reject'
+    return status
+
 # def create_sample_dists(cleaned_data, y_var=None, categories=[]):
 #     """
 #     Each hypothesis test will require you to create a sample distribution from your data
-#     Best make a repeatable function
+#     Best make a repeata-ble function
 
 #     :param cleaned_data:
 #     :param y_var: The numeric variable you are comparing
@@ -76,13 +87,7 @@ def evaluate_PDF(rv, x=4):
 #     # Main chunk of code using t-tests or z-tests
 #     return htest_dfs
 
-# def compare_pval_alpha(p_val, alpha):
-#     status = ''
-#     if p_val > alpha:
-#         status = "Fail to reject"
-#     else:
-#         status = 'Reject'
-#     return status
+
 
 
 # def hypothesis_test_one(alpha = None, cleaned_data):
