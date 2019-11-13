@@ -3,11 +3,18 @@
 # READ THIS ------------------------------------------------
 
 import hypothesis_tests as ht
+import visualizations as vis
 import api
 
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
+from statsmodels.stats.power import TTestIndPower, TTestPower
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('darkgrid')
+
 
 def read_aqi24_data():
   """
@@ -24,7 +31,7 @@ def read_aqi24_data():
   aqi.aqi_24 = aqi.aqi_24.map(lambda x: [int(i) for i in x[1:-1].split(', ')])
 
   aqi['aqi_mean'] = aqi.aqi_24.map(lambda x: np.asarray(x).mean())
-  aqi['aqi_med'] = aqi.aqi_24.map(lambda x: stats.median(x))
+  # aqi['aqi_med'] = aqi.aqi_24.map(lambda x: stats.median(x))
 
   return aqi
 
@@ -99,35 +106,85 @@ def compare_pval_alpha(p_val, alpha):
 
 # ADDTIONAL THINGS THERE ->
 
-# def hypothesis_test_one(alpha = None, cleaned_data):
-#     """
-#     Describe the purpose of your hypothesis test in the docstring
-#     These functions should be able to test different levels of alpha for the hypothesis test.
-#     If a value of alpha is entered that is outside of the acceptable range, an error should be raised.
+def hypothesis_test_group(groupby, group_one, group_two, two_sided = True, alpha = None,
+                          sampling = True, sample_size = 1000):
+  """
+  Use Welch t-test for hypothesis testing with set data but user given col to
+  group the data by.
 
-#     :param alpha: the critical value of choice
-#     :param cleaned_data:
-#     :return:
-#     """
-#     # Get data for tests
-#     comparison_groups = create_sample_dists(cleaned_data=None, y_var=None, categories=[])
+  :param alpha: the critical value of choice
+  :return: status, cohen's d
+  """
+  # Get data by groups for tests
+  aqi = read_aqi24_data()
+  one, two = aqi_by_group(aqi,groupby,group_one,group_two)
+  num = (len(one)+len(two))/2
+
+  # get sample mean if sampling
+  if sampling:
+    one = create_sample_means(one, sample_size)
+    two = create_sample_means(two, sample_size)
+    num = sample_size
+
+  print('size of',group_one,len(one))
+  print('size of',group_two,len(two))
+
+  # looking at the mean, standard deviation and variance of Inner London vs. Outer London
+  print(group_one,' mean, std, var are: ', ht.sample_mu_std_var(one))
+  print(group_two,' mean, std, var are: ', ht.sample_mu_std_var(two))
+
+  vis.distplots(one, two)
+
+  t = welch_t(one, two)
+  df = welch_df(one, two)
+  print('Welch t-stat is', round(t,3),'degree of freedom is', round(df,3))
+
+  p = p_value(one, two, two_sided)
+  print('p-value is: ', p)
+
+  status = compare_pval_alpha(p, alpha)
+
+  power_analysis = TTestIndPower()
+
+  coh_d = ht.Cohen_d(one, two)
+  power = power_analysis.solve_power(alpha=.01, effect_size=coh_d,
+                                      nobs1=num, alternative='two-sided')
+
+  assertion = ''
+  if status == 'Fail to reject':
+      assertion = 'cannot'
+  else:
+      assertion = "can"
+      # calculations for effect size, power, etc here as well
+
+  print(f'\nBased on the p value of {p} and our aplha of {alpha} we {status.lower()}  the null hypothesis.'
+        f'\nDue to these results, we  {assertion} state that there is a difference between {group_one}'
+        f'\nand {group_two}')
+
+  if assertion == 'can':
+      print(f"with an effect size, cohen's d, of {str(round(coh_d,3))} and power of {power}.")
+  else:
+      print(".")
+
+  return status, coh_d
 
 
-#     # starter code for return statement and printed results
-#     status = compare_pval_alpha(p_val, alpha)
-#     assertion = ''
-#     if status == 'Fail to reject':
-#         assertion = 'cannot'
-#     else:
-#         assertion = "can"
-#         # calculations for effect size, power, etc here as well
+def power_n_plot(subplots, alpha_arr, e_sizes, axis_limit, marker_size):
 
-#     print(f'Based on the p value of {p_val} and our aplha of {alpha} we {status.lower()}  the null hypothesis.'
-#           f'\n Due to these results, we  {assertion} state that there is a difference between NONE')
+  power_analysis = TTestIndPower()
 
-#     if assertion == 'can':
-#         print(f"with an effect size, cohen's d, of {str(coh_d)} and power of {power}.")
-#     else:
-#         print(".")
+  fig, axes = plt.subplots(ncols=1, nrows=subplots, figsize=(8,5*subplots))
+  for n, alpha in enumerate(alpha_arr):
+    ax = axes[n]
+    power_analysis.plot_power(dep_var="nobs",
+                              nobs = np.array(range(2,axis_limit)),
+                              effect_size=e_sizes,
+                              alpha=alpha,
+                              ax=ax)
+    ax.set_title('Power of Test for alpha = {}'.format(alpha))
+    ax.set_xticks(list(range(0,axis_limit,marker_size)))
+    ax.set_yticks(np.linspace(0,1,11))
 
-#     return status
+  return None
+
+
