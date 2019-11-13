@@ -17,10 +17,9 @@ import data_cleaning as dc
 
 def generate_datapoints(borough):
     cleaned_data = dc.full_clean()
-#     call = api.get_place_aqi(cleaned_data, borough,1)
-#     borough_data = np.asarray(call)
-#     return borough_data
-    return cleaned_data
+    call = api.get_place_aqi(cleaned_data, borough,120)
+    borough_data = np.asarray(call)
+    return borough_data
 
 def sample_mu_std_var(sample):
     mean = np.mean(sample)
@@ -86,26 +85,8 @@ def read_aqi24_data():
   # after reading the saved aqi data, turn it into a list and calcualte mean and average
   aqi.aqi_24 = aqi.aqi_24.map(lambda x: [int(i) for i in x[1:-1].split(', ')])
 
-  aqi['aqi_mean'] = aqi.aqi_24.map(lambda x: np.asarray(x).mean())
-  aqi['aqi_med'] = aqi.aqi_24.map(lambda x: stats.median(x))
-
   return aqi
 
-def read_aqi24_data1():
-  """
-  This method reads the aqi_24 data (air quality data from last 24hours) from
-  csv file in /data folder and return a dataframe
-
-  """
-
-  # RUN THIS ONLY ONCE, afterwards, read_csv
-  # dc.aqi_data(borough_data, 24)
-  aqi = pd.read_csv('./data/borough_data_cleaned_aqi.csv',index_col=0)
-
-  # after reading the saved aqi data, turn it into a list and calcualte mean and average
-  aqi.aqi_24 = aqi.aqi_24.map(lambda x: [int(i) for i in x[1:-1].split(', ')])
-
-  return aqi
 
 def aqi_by_group(aqi,col,group1, group2):
   group1_raw = aqi[aqi[col]==group1].aqi_24.tolist()
@@ -152,6 +133,20 @@ def welch_df(a, b):
     denominator = (s1/ n1)**2/(n1 - 1) + (s2/ n2)**2/(n2 - 1)
 
     return numerator/denominator
+
+
+def p_value(a, b, two_sided=False):
+
+    t = welch_t(a, b)
+    df = welch_df(a, b)
+
+    p = 1- stats.t.cdf(np.abs(t), df)
+
+    if two_sided:
+      return 2*p
+    else:
+      return p
+
 
 # def create_sample_dists(cleaned_data, y_var=None, categories=[]):
 #     """
