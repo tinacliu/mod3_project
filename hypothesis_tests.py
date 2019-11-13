@@ -17,7 +17,7 @@ import data_cleaning as dc
 
 def generate_datapoints(borough):
     cleaned_data = dc.full_clean()
-    call = api.get_place_aqi(cleaned_data, borough,1)
+    call = api.get_place_aqi(cleaned_data, borough,120)
     borough_data = np.asarray(call)
     return borough_data
 
@@ -42,6 +42,9 @@ def Cohen_d(sample1, sample2):
 
 def twosample_tstatistic(sample1, sample2):
     stat = stats.ttest_ind(sample1, sample2, equal_var = False)
+    return stat
+
+def print_stats(stat):
     t_stat = stat.statistic
     p_val = stat.pvalue
     print('T-Stat: ',t_stat, ' P-Val: ',p_val)
@@ -60,10 +63,95 @@ def evaluate_PDF(rv, x=4):
     ys = rv.pdf(xs)
     return xs, ys
 
+def compare_pval_alpha(p_val, alpha):
+    status = ''
+    if p_val > alpha:
+        status = "Fail to reject"
+    else:
+        status = 'Reject'
+    return status
+
+def read_aqi24_data():
+  """
+  This method reads the aqi_24 data (air quality data from last 24hours) from
+  csv file in /data folder and return a dataframe
+
+  """
+
+  # RUN THIS ONLY ONCE, afterwards, read_csv
+  # dc.aqi_data(borough_data, 24)
+  aqi = pd.read_csv('./data/borough_data_cleaned_aqi.csv',index_col=0)
+
+  # after reading the saved aqi data, turn it into a list and calcualte mean and average
+  aqi.aqi_24 = aqi.aqi_24.map(lambda x: [int(i) for i in x[1:-1].split(', ')])
+
+  return aqi
+
+
+def aqi_by_group(aqi,col,group1, group2):
+  group1_raw = aqi[aqi[col]==group1].aqi_24.tolist()
+  group1_aqi = api.flatten_list(group1_raw)
+
+  group2_raw = aqi[aqi[col]==group2].aqi_24.tolist()
+  group2_aqi = api.flatten_list(group2_raw)
+
+  return np.array(group1_aqi), np.array(group2_aqi)
+
+
+def create_sample_means(data, num = 1000):
+  """
+  Create a sample mean distribution from given data (np.array format).
+  """
+  sample_mean = []
+
+  for x in range(num):
+    ele = np.random.choice(data, size=50).mean()
+    sample_mean.append(ele)
+
+  return np.array(sample_mean)
+
+
+def welch_t(a, b):
+
+    """ Calculate Welch's t-statistic for two samples. """
+
+    numerator = a.mean() - b.mean()
+    denominator = np.sqrt(a.var(ddof=1)/a.size + b.var(ddof=1)/b.size)
+
+    return np.abs(numerator/denominator)
+
+def welch_df(a, b):
+
+    """ Calculate the effective degrees of freedom for two samples. """
+
+    s1 = a.var(ddof=1)
+    s2 = b.var(ddof=1)
+    n1 = a.size
+    n2 = b.size
+
+    numerator = (s1/n1 + s2/n2)**2
+    denominator = (s1/ n1)**2/(n1 - 1) + (s2/ n2)**2/(n2 - 1)
+
+    return numerator/denominator
+
+
+def p_value(a, b, two_sided=False):
+
+    t = welch_t(a, b)
+    df = welch_df(a, b)
+
+    p = 1- stats.t.cdf(np.abs(t), df)
+
+    if two_sided:
+      return 2*p
+    else:
+      return p
+
+
 # def create_sample_dists(cleaned_data, y_var=None, categories=[]):
 #     """
 #     Each hypothesis test will require you to create a sample distribution from your data
-#     Best make a repeatable function
+#     Best make a repeata-ble function
 
 #     :param cleaned_data:
 #     :param y_var: The numeric variable you are comparing
@@ -76,13 +164,7 @@ def evaluate_PDF(rv, x=4):
 #     # Main chunk of code using t-tests or z-tests
 #     return htest_dfs
 
-# def compare_pval_alpha(p_val, alpha):
-#     status = ''
-#     if p_val > alpha:
-#         status = "Fail to reject"
-#     else:
-#         status = 'Reject'
-#     return status
+
 
 
 # def hypothesis_test_one(alpha = None, cleaned_data):
