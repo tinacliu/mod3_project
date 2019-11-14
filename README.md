@@ -80,5 +80,5 @@ api.py - Functions for calling API
 data_cleaning.py - Functions for cleaning data
 hypothesis_tests.py - Functions for hypothesis testing
 visualizations.py - Functions for visualizations
-hypothesis_testing.ipynb - Hypothesis tests with code and explanations
+hypotheses.ipynb - Hypotheses tests with code and explanations
 presentation.pdf - Stakeholder presentation 
