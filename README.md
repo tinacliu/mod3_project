@@ -61,24 +61,23 @@ Tina
 - Refactoring Data Cleaning Code
 - Refactoring API Call Code
 - Generating Visualizations
-- Hypothesis 1
+- Hypothesis 1, 4
 
 
 Zaria
 - BreezoMeter API check
-- Geo API check
-- London Borough data EDA
+- London Borough data - EDA
 - Refactoring Hypothesis Code
 - Generating Visualizations
 - Refactoring Visualization Code
-- Hypothesis 2, 3
+- Hypothesis 2, 3, 4
 
 
 * e. Summary of the files in the repository
 
-api.py - Functions for calling API
-data_cleaning.py - Functions for cleaning data
-hypothesis_tests.py - Functions for hypothesis testing
-visualizations.py - Functions for visualizations
-hypotheses.ipynb - Hypotheses tests with code and explanations
-presentation.pdf - Stakeholder presentation 
+- api.py - Functions for calling API
+- data_cleaning.py - Functions for cleaning data
+- hypothesis_tests.py - Functions for hypothesis testing
+- visualizations.py - Functions for visualizations
+- hypotheses.ipynb - Hypotheses tests with code and explanations
+- presentation.pdf - Stakeholder presentation 
