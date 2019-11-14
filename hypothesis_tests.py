@@ -41,8 +41,8 @@ def Cohen_d(sample1, sample2):
     return d
 
 def twosample_tstatistic(sample1, sample2):
-    stat = stats.ttest_ind(sample1, sample2, equal_var = False)
-    return stat
+    statt = stats.ttest_ind(sample1, sample2, equal_var = False)
+    return statt
 
 def print_stats(stat):
     t_stat = stat.statistic
