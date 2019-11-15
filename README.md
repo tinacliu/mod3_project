@@ -74,7 +74,6 @@ Zaria
 - Refactoring Visualization Code
 - Hypothesis 2, 3, 4
 
-
 * e. Summary of the files in the repository
 
 - api.py - Functions for calling API
