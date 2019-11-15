@@ -74,7 +74,6 @@ Zaria
 - Refactoring Visualization Code
 - Hypothesis 2, 3, 4
 
-
 * e. Summary of the files in the repository
 
 - api.py - Functions for calling API
@@ -82,4 +81,4 @@ Zaria
 - hypothesis_tests.py - Functions for hypothesis testing
 - visualizations.py - Functions for visualizations
 - hypotheses.ipynb - Hypotheses tests with code and explanations
-- presentation.pdf - Stakeholder presentation
+- Hypothesis_Testing.pdf - Stakeholder presentation

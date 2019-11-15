@@ -27,10 +27,10 @@ def distplots(sample1, sample2):
 def pdf_plot(borough1, borough2, normal_d1, normal_d2):
     #Var 1
     xs, ys = ht.evaluate_PDF(normal_d1)
-    plt.plot(xs, ys, label='borough1', linewidth=4, color='#beaed4')
+    plt.plot(xs, ys, label=borough1, linewidth=4, color='#beaed4')
     #Var2
     xs, ys = ht.evaluate_PDF(normal_d2)
-    plt.plot(xs, ys, label='borough2', linewidth=4, color='#fdc086')
+    plt.plot(xs, ys, label=borough2, linewidth=4, color='#fdc086')
 
     plt.xlabel('PDF of AQI in borough1 and borough2')
 
