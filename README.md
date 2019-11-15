@@ -82,4 +82,4 @@ Zaria
 - hypothesis_tests.py - Functions for hypothesis testing
 - visualizations.py - Functions for visualizations
 - hypotheses.ipynb - Hypotheses tests with code and explanations
-- presentation.pdf - Stakeholder presentation
+- Hypothesis_Testing.pdf - Stakeholder presentation
